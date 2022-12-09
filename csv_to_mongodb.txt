@@ -1,0 +1,46 @@
+import pandas as pd
+import pymongo
+DATABASE='ineuron_assignment'
+COLLECTION="add_prediction_collection"
+CLIENT='mongodb://localhost:27017'
+FILEPATH="/config/workspace/Admission_Predict.csv"
+
+class MongoClient:
+    def __init__(self,CLIENT,DATABASE,COLLECTION):
+        self.client=pymongo.MongoClient(CLIENT)
+        self.database=DATABASE
+        self.collection=COLLECTION
+    
+    def read_data(self,FILEPATH):
+        try:
+            df=pd.read_csv(FILEPATH)
+            data=df.to_dict(orient='records')
+            return data
+        except Exception as e:
+            raise e    
+    
+    def csv_to_mongodb(self):
+        try:
+            database=self.client[DATABASE]
+            collection=database[self.collection]
+            data=self.read_data(FILEPATH)
+            collection.insert_many(data)
+
+            return collection.find()
+        except Exception as e:
+            raise e    
+
+if __name__=="__main__":
+    mongo=MongoClient(CLIENT, DATABASE, COLLECTION)
+    data=mongo.read_data(FILEPATH)
+    record=mongo.csv_to_mongodb()
+
+    for i in record:
+        print(i)
+
+
+
+
+
+
+
