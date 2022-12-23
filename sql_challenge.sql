@@ -243,4 +243,14 @@ where first_order =1
 
 )               
 
-select Round(sum(immediate)*100/count(first_order),2) as immediate_percentage from result            
+select Round(sum(immediate)*100/count(first_order),2) as immediate_percentage from result   
+
+#20 Write an SQL query to find the ctr of each Ad. Round ctr to two decimal points.
+#Return the result table ordered by ctr in descending order and by ad_id in ascending order in case of a
+#tie. 
+
+select ad_id,
+       ifnull(round(sum(action='Clicked')/sum(action!='Ignored')*100,2),0) as ctr
+       from ads
+       group by ad_id
+       order by ctr desc,ad_id         
