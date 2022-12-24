@@ -253,4 +253,114 @@ select ad_id,
        ifnull(round(sum(action='Clicked')/sum(action!='Ignored')*100,2),0) as ctr
        from ads
        group by ad_id
-       order by ctr desc,ad_id         
+       order by ctr desc,ad_id        
+
+#21 Write an SQL query to find the team size of each of the employees.   
+SELECT 
+    e1.employee_id, COUNT(e2.team_id) AS team_size
+FROM
+    Employee e1
+        INNER JOIN
+    Employee e2 ON e1.team_id = e2.team_id
+GROUP BY e1.employee_id , e2.team_id
+order by e1.employee_id;
+
+create table if not exists Countries(
+country_id int,
+country_name varchar(10)
+);
+create table if not exists Weather(
+country_id int,
+weather_state int,
+`day` date 
+);
+
+insert into Countries values(2,'USA'),(3,'Australia'),
+							(7,'Peru'),(5,'China'),
+                            (8,'Morocco'),(9,'Spain');
+                            
+insert into weather values(2,15,'2019-11-01'),(2,12,'2019-10-28'),(2,12,'2019-10-27'),
+                          (3,-2,'2019-11-10'),(3,0,'2019-11-11'),(3,3,'2019-11-12'),
+                          (5,16,'2019-11-07'),(5,18,'2019-11-09'),(5,21,'2019-11-23'),
+                          (7,25,'2019-11-28'),(7,22,'2019-12-01'),(7,20,'2019-12-02'),
+                          (8,25,'2019-11-05'),(8,27,'2019-11-15'),(8,31,'2019-11-25'),
+                          (9,7,'2019-10-23'),(9,3,'2019-12-23');
+                          
+#22 Write an SQL query to find the type of weather in each country for November 2019.
+SELECT 
+    country_name,
+    CASE
+        WHEN AVG(weather_state) <= 15 THEN 'Cold'
+        WHEN AVG(weather_state) >= 25 THEN 'Hot'
+        ELSE 'Warm'
+    END AS weather_type
+FROM
+    Countries
+        INNER JOIN
+    Weather ON Countries.country_id = Weather.country_id
+WHERE
+    LEFT(day, 7) = '2019-11'
+GROUP BY country_name;
+
+
+create table if not exists Prices(
+product_id int,
+start_date date,
+end_date date,
+price int
+);
+
+create table if not exists UnitsSold(
+product_id int,
+purchase_date date,
+units int
+);
+
+INSERT into Prices values(1,'2019-02-17','2019-02-28',5),
+						(1,'2019-03-01','2019-03-22',20),
+                        (2,'2019-02-01','2019-02-20',15),
+                        (2,'2019-02-21','2019-03-31',30);
+
+insert into UnitsSold values(1,'2019-02-25',100),(1,'2019-03-01',15),
+						    (2,'2019-02-10',200),(2,'2019-03-22',30);
+##23 Write an SQL query to find the average selling price for each product. average_price should be
+# rounded to 2 decimal places.
+SELECT 
+    p.product_id, round(AVG(p.price) * u.units /sum(u.units),2) as average_price
+FROM
+    Prices p
+        INNER JOIN
+    UnitsSold u ON p.product_id = u.product_id
+GROUP BY p.product_id;
+
+# create Activity Table.
+
+create table if not exists Activity(
+player_id int,
+device_id int,
+event_date date,
+games_played int
+);
+
+insert into Activity values(1,2,'2016-03-01',5),(1,2,'2016-05-02',6),
+						   (2,3,'2017-06-25',1),(3,1,'2016-03-02',0),
+                           (3,4,'2018-07-03',5);
+                           
+
+#24 Write an SQL query to report the first login date for each player.
+
+SELECT 
+    player_id, MIN(event_date) as first_login
+FROM
+    Activity
+GROUP BY player_id;    
+
+#25 Write an SQL query to report the device that is first logged in for each player.
+SELECT 
+    player_id, MIN(device_id) as device_id
+FROM
+    Activity
+GROUP BY player_id;    
+
+                       	   
+	   
