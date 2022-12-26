@@ -360,7 +360,122 @@ SELECT
     player_id, MIN(device_id) as device_id
 FROM
     Activity
-GROUP BY player_id;    
+GROUP BY player_id; 
+
+#26 Write an SQL query to get the names of products that have at least 100 units ordered in February 2020
+# and their amount.
+
+SELECT 
+    p.product_name, SUM(unit)
+FROM
+    Products p
+        INNER JOIN
+    Orders o ON p.product_id = o.product_id
+where left(order_date,7)='2020-02'    
+group by 1
+having sum(unit)>=100;    
+
+#create table Users
+create table if not exists Users(
+user_id int,
+name varchar(20),
+mail varchar(50)
+);
+
+insert into Users values(1,'Winston','winston@leetcode.com'),
+                         (2,'Jonathan','Jonathanisgreat'),
+                         (3,'Annabelle','bella-@leetcode.com'),
+                         (4,'sally','sally.come@leetcode.com'),
+                         (5,'Marwan','quarz#2020@leetcode.com'),
+                         (6,'David','david69@gmail.com'),
+                         (7,'Shapiro','.shapo@leetcode.com');
+
+#27 Write an SQL query to find the users who have valid emails
+
+SELECT 
+    *
+FROM
+    Users
+WHERE
+    mail regexp '^[a-zA-Z][a-zA-Z0-9\_.-]*@leetcode.com';
+   
+   
+# create Customers Table
+create table if not Exists Customers(
+customer_id int,
+name Varchar(20),
+country varchar(20)
+); 
+
+create table if not exists Products2(
+product_id int,
+description varchar(60),
+price int
+
+);
+
+create table if not exists orders2(
+order_id int,
+customer_id int,
+product_id int,
+order_date date ,
+quantity int
+
+);
+
+insert into Customers values(1,'Winston','USA'),
+                             (2,'Jonathan','Peru'),
+                             (3,'Moustafa','Egypt');
+insert into Products2 values(10,'LC Phone',300),
+							(20,'LC T-Shirt',10),
+                            (30,'LC Book',45),
+                            (40,'LC Keychain',2);
+                            
+insert into orders2 values(1,1,10,'2020-06-10',1),(2,1,20,'2020-07-01',1),
+                          (3,1,30,'2020-07-08',2),(4,2,10,'2020-06-15',2),
+                          (5,2,40,'2020-07-01',10),(6,3,20,'2020-06-24',2),
+                          (7,3,30,'2020-06-25',2),(9,3,30,'2020-05-08',3);
+                          
+#28 Write an SQL query to report the customer_id and customer_name of customers who have spent at
+# least $100 in each month of June and July 2020.
+
+SELECT 
+    o.customer_id, name
+FROM
+    Customers c
+        INNER JOIN
+    orders2 o ON c.customer_id = o.customer_id
+        INNER JOIN
+    products2 p ON p.product_id = o.product_id
+GROUP BY 1 , 2
+HAVING SUM(CASE
+    WHEN DATE_FORMAT(order_date, '%Y-%m') = '2020-06' THEN price * quantity
+END) >= 100
+    AND SUM(CASE
+    WHEN DATE_FORMAT(order_date, '%Y-%m') = '2020-07' THEN price * quantity
+END) >= 100;
+
+#29 Write an SQL query to report the distinct titles of the kid-friendly movies streamed in June 2020.
+
+SELECT DISTINCT
+    title
+FROM
+    Content
+        JOIN
+    TVProgram USING (content_id)
+WHERE
+    kids_content = 'Y'
+        AND content_type = 'Movies'
+        AND (MONTH(program_date) , YEAR(program_date)) = (6 , 2020);
+
+#30 Write an SQL query to find the npv of each query of the Queries table.
+SELECT 
+    q.id, q.year, IFNULL(n.npv, 0) AS npv
+FROM
+    queries AS q
+        LEFT JOIN
+    npv AS n ON (q.id , q.year) = (n.id , n.year)
+   
 
                        	   
 	   
