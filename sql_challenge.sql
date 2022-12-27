@@ -477,5 +477,131 @@ FROM
     npv AS n ON (q.id , q.year) = (n.id , n.year)
    
 
+#31 Write an SQL query to show the unique ID of each user, If a user does not have a unique ID replace just show null.
+
+SELECT
+    unique_id,
+    name
+FROM (
+SELECT
+    e.id, 
+    e.name,
+    eu.unique_id
+FROM EMployees as e LEFT JOIN EmployeeUNI as eu
+ON e.id = eu.id
+    ) x;
+    
+    
+    
+#33 Write an SQL query to report the distance travelled by each user.    
+    
+SELECT
+    u.name,
+    IFNULL(SUM(distance),0) as travelled_distance
+FROM Users as u LEFT JOIN Rides as r
+ON r.user_id = u.id
+GROUP BY 1
+ORDER BY 2 DESC, 1;
+
+
+#35 Find the name of the user who has rated the greatest number of movies. In case of a tie,
+#return the lexicographically smaller user name.
+# Find the movie name with the highest average rating in February 2020. In case of a tie, return
+# the lexicographically smaller movie name.
+
+SELECT user_name AS results FROM
+(
+SELECT a.name AS user_name, COUNT(*) AS counts FROM Movie_Rating AS b
+    JOIN Users AS a
+    on a.user_id = b.user_id
+    GROUP BY b.user_id
+    ORDER BY counts DESC, user_name ASC LIMIT 1
+) first_query
+UNION
+SELECT movie_name AS results FROM
+(
+SELECT c.title AS movie_name, AVG(d.rating) AS rate FROM Movie_Rating AS d
+    JOIN Movies AS c
+    on c.movie_id = d.movie_id
+    WHERE substr(d.created_at, 1, 7) = '2020-02'
+    GROUP BY d.movie_id
+    ORDER BY rate DESC, movie_name ASC LIMIT 1
+) second_query;
+
+#36 Write an SQL query to report the distance travelled by each user.
+#Return the result table ordered by travelled_distance in descending order, if two or more users
+# travelled the same distance, order them by their name in ascending order.
+SELECT 
+    name, SUM(IFNULL(distance, 0)) AS travelled_distance
+FROM
+    rides r
+        RIGHT JOIN
+    users u ON r.user_id = u.id
+GROUP BY name
+ORDER BY 2 DESC , 1 ASC;
+
+
+create table if not exists Departments(
+id int,
+name varchar(30)
+);
+
+create table if not exists Students (
+id int,
+name varchar(30),
+department_id int
+
+);
+
+insert into Departments values(1,'Electrical Engineering'),
+                               (7,'Computer Engineering'),
+                               (13,'Business Administration');
+insert into Students values(23,'Alice',1),
+                            (1,'Bob',7),
+                            (5,'Jennifer',13),
+                            (2,'John',14),
+                            (4,'Jasmine',77),
+                            (3,'Steve',74),
+                            (6,'Luis',1),(8,'Jonathan',7),
+                            (7,'Daiana',33),
+                            (11,'Madelynn',1);
+
+
+#37 Write an SQL query to find the id and the name of all students who are enrolled in departments that no longer exists.
+
+SELECT 
+    s.id, s.name
+FROM
+    Students s
+        LEFT JOIN
+    Departments d ON s.department_id = d.id
+WHERE
+    d.id IS NULL;
+    
+
+#create Calls Table
+create table if not exists Calls(
+from_id int,
+to_id int,
+duration int
+);
+
+insert into Calls values(1,2,59),(2,1,11),(1,3,20),
+                         (3,4,100),(3,4,200),(3,4,200),
+                         (4,3,499);
+    
+#39 Write an SQL query to report the number of calls and the total call duration between each pair of
+#distinct persons (person1, person2) where person1 < person2.
+select from_id as person1,to_id as person2,
+    count(duration) as call_count, sum(duration) as total_duration
+from (select * 
+      from Calls 
+      
+      union all
+      
+      select to_id, from_id, duration 
+      from Calls) t1
+where from_id < to_id
+group by person1, person2
                        	   
 	   
