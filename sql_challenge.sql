@@ -605,3 +605,57 @@ where from_id < to_id
 group by person1, person2
                        	   
 	   
+	   
+# 41 Write an SQL query to report the number of cubic feet of volume the inventory occupies in each
+# warehouse.
+SELECT 
+    name,sum(units*width*length*Height) as volume
+FROM
+    warehouse w
+        JOIN
+    Products3 p ON w.product_id = p.product_id
+group by name;
+
+create table if not exists Sales2(
+sale_date date,
+fruit varchar(10),
+sold_num int
+
+);
+
+insert into sales2 values('2020-05-01','apples',10),
+						('2020-05-01','oranges',8),
+						('2020-05-02','apples',15),
+						('2020-05-02','oranges',15),
+						('2020-05-03','apples',20),
+						('2020-05-03','oranges',0),
+						('2020-05-04','apples',15),
+						('2020-05-04','oranges',16);
+
+
+
+#42Write an SQL query to report the difference between the number of apples and oranges sold each day.
+# Return the result table ordered by sale_date
+
+SELECT 
+    DATE(sale_date) AS sale_date,
+    SUM(CASE
+        WHEN fruit = 'apples' THEN sold_num
+        WHEN fruit = 'oranges' THEN - sold_num
+    END) AS diff
+FROM
+    Sales2
+GROUP BY 1
+ORDER BY 1;
+
+#43 Write an SQL query to report the managers with at least five direct reports.
+
+SELECT 
+    a.name
+FROM
+    employee a
+        INNER JOIN
+    employee b ON (a.id = b.managerid)
+GROUP BY a.name
+HAVING COUNT(DISTINCT b.id) >= 5;
+	   
